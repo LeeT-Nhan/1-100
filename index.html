@@ -71,7 +71,7 @@
                 // Random số tiền từ 100k đến 1tr (làm tròn đến hàng nghìn)
                 // Công thức: (Random * (Max - Min) + Min)
                 // Làm tròn chẵn chục nghìn cho đẹp
-                let rawAmount = Math.floor(Math.random() * (100 - 1 + 1) + 100) * 1000;
+                let rawAmount = Math.floor(Math.random() * (100 - 1 + 1) + 1) * 1000;
 
                 // Hiệu ứng chạy số
                 const animateNumber = (timestamp) => {
