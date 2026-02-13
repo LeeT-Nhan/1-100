@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bốc Lì Xì May Mắn - Tết 2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="decor-frame noselect">
+        <div class="icon i1">🐎</div>
+        <div class="icon i2">🧨</div>
+        <div class="icon i3">🌸</div>
+        <div class="icon i4">🏮</div>
+        <div class="icon i5">🧧</div>
+        <div class="icon i6">🎆</div>
+    </div>
+
+    <div class="envelope-container" id="envelope" onclick="openLixi()">
+        <div class="envelope-flap"></div>
+
+        <div class="money">
+            <div class="img-placeholder">💵</div>
+            <div style="font-size: 0.8rem; margin-top:5px; color: #1e3c00;">BỐC LÌ XÌ ĐEE</div>
+            <div class="money-display" id="rolling-number">000000</div>
+        </div>
+
+        <div class="envelope-body">
+            <div class="pattern">福</div>
+        </div>
+    </div>
+
+    <div class="result-overlay" id="overlay">
+        <div class="congrats-text">Chúc Mừng Năm Mới!</div>
+        <div class="congrats-text" style="font-size: 1.2rem; color: white;">Bạn đã nhận được lì xì:</div>
+        <div class="final-amount" id="final-result">500.000</div>
+        <div class="message" id="wishes">Vạn sự như ý - Tỷ sự như mơ!</div>
+        <button class="reset-btn" onclick="resetGame()">Chơi lại</button>
+    </div>
+
+    <script>
+        let isOpened = false;
+
+        function formatCurrency(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function openLixi() {
+            if (isOpened) return; // Chặn click nhiều lần
+            isOpened = true;
+
+            const envelope = document.getElementById('envelope');
+            const rollingDisplay = document.getElementById('rolling-number');
+            const overlay = document.getElementById('overlay');
+            const finalResult = document.getElementById('final-result');
+
+            // 1. Mở nắp
+            envelope.classList.add('open');
+
+            // 2. Sau 0.5s thì kéo tiền lên
+            setTimeout(() => {
+                envelope.classList.add('pull-money');
+
+                // 3. Bắt đầu quay số (hiệu ứng xổ số)
+                let duration = 2500; // Quay trong 2.5 giây
+                let startTime = null;
+
+                // Random số tiền từ 100k đến 1tr (làm tròn đến hàng nghìn)
+                // Công thức: (Random * (Max - Min) + Min)
+                // Làm tròn chẵn chục nghìn cho đẹp
+                let rawAmount = Math.floor(Math.random() * (1000 - 100 + 1) + 100) * 1000;
+
+                // Hiệu ứng chạy số
+                const animateNumber = (timestamp) => {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+
+                    // Trong lúc quay, hiện số ngẫu nhiên
+                    if (progress < duration) {
+                        let randomTemp = Math.floor(Math.random() * 999999);
+                        rollingDisplay.innerText = randomTemp.toString().padStart(6, '0');
+                        requestAnimationFrame(animateNumber);
+                    } else {
+                        // Kết thúc quay, hiện số chính xác
+                        rollingDisplay.innerText = formatCurrency(rawAmount);
+
+                        // 4. Hiện Overlay kết quả sau 0.5s dừng số
+                        setTimeout(() => {
+                            showResult(rawAmount);
+                        }, 800);
+                    }
+                };
+                requestAnimationFrame(animateNumber);
+
+            }, 600);
+        }
+
+        function showResult(amount) {
+            const overlay = document.getElementById('overlay');
+            const finalResult = document.getElementById('final-result');
+            const wishes = document.getElementById('wishes');
+
+            // Format tiền cho đẹp
+            finalResult.innerText = formatCurrency(amount) + " đ";
+
+            // Random câu chúc
+            const wishList = [
+                "Tiền vào như nước sông Đà!",
+                "Hay ăn chóng béo, tiền nhiều như kẹo!",
+                "Sức khỏe dồi dào, tiền vào bạc tỉ!",
+                "Năm mới phát tài, vạn sự như ý!",
+                "Công thành danh toại, lộc lá đầy nhà!"
+            ];
+            wishes.innerText = wishList[Math.floor(Math.random() * wishList.length)];
+
+            overlay.classList.add('show');
+        }
+
+        function resetGame() {
+            // Reset lại trạng thái ban đầu
+            isOpened = false;
+            const envelope = document.getElementById('envelope');
+            const overlay = document.getElementById('overlay');
+            const rollingDisplay = document.getElementById('rolling-number');
+
+            overlay.classList.remove('show');
+            envelope.classList.remove('pull-money');
+
+            // Đợi tiền thụt xuống rồi mới đóng nắp
+            setTimeout(() => {
+                envelope.classList.remove('open');
+                rollingDisplay.innerText = "000000";
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>
